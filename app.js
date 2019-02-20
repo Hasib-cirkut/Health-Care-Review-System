@@ -7,7 +7,7 @@ const index = require('./routes/index.js');
 const user = require('./routes/user.js');
 
 
-const port = 5000 || process.env.PORT;
+const port = process.env.PORT || 5000;
 var app = express();
 
 app.set('view engine', 'hbs');
