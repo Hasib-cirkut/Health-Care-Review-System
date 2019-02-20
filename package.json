@@ -1,0 +1,15 @@
+{
+  "name": "cse301project",
+  "version": "1.0.0",
+  "description": "A health care review system using express and mysql",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "hbs": "^4.0.2"
+  }
+}
