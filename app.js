@@ -3,6 +3,7 @@
 const path = require('path');
 const express = require('express');
 const hbs = require('hbs');
+const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const index = require('./routes/index.js');
 const user = require('./routes/user.js');
@@ -13,7 +14,6 @@ var app = express();
 
 app.set('views', path.join(__dirname + '/views'));
 app.set('view engine', 'hbs');
-
 
 //Mounting
 app.use(express.urlencoded({extended : false}));
@@ -28,6 +28,10 @@ app.use('/user', user);
 //hbs
 
 hbs.registerPartials(__dirname + '/views/partials');
+
+//Database
+
+
 
 
 //Initialize server
