@@ -19,6 +19,7 @@ app.set('view engine', 'hbs');
 //Mounting
 app.use(express.urlencoded({extended : false}));
 app.use(express.json());
+app.use('/assets', express.static(__dirname + '/assets'))
 
 app.use(session({
 	secret: 'secret',
