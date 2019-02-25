@@ -7,6 +7,7 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const index = require('./routes/index.js');
 const user = require('./routes/user.js');
+const session = require('express-session');
 
 
 const port = process.env.PORT || 5000;
@@ -19,10 +20,18 @@ app.set('view engine', 'hbs');
 app.use(express.urlencoded({extended : false}));
 app.use(express.json());
 
+app.use(session({
+	secret: 'secret',
+	resave: true,
+	saveUninitialized: true
+}));
+
 //app.use(bodyParser.urlencoded({extended: false}))
 //app.use(bodyParser.json())
 app.use('/', index);
 app.use('/user', user);
+
+
 
 
 //hbs

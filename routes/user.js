@@ -1,18 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const session = require('express-session');
 
 router.get('/', (req, res) =>{
-  res.render('user');
+  if(req.session.loggedin){
+    res.render('user', {username : req.session.username});
+  }else {
+    res.redirect('/login');
+  }
 })
 
-router.get('/addInfo', (req, res) =>{
-  res.render('addInfo');
-})
-
-router.post('/addInfo/submit', (req, res)=>{
-  console.log(`Name: ${req.body.name}`);
-  console.log(`Age: ${req.body.age}`);
-  res.redirect('/');
-})
 
 module.exports = router;
