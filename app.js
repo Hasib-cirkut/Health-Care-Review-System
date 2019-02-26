@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const index = require('./routes/index.js');
 const user = require('./routes/user.js');
 const session = require('express-session');
+const expressValidator = require('express-validator');
 
 
 const port = process.env.PORT || 5000;
@@ -19,6 +20,7 @@ app.set('view engine', 'hbs');
 //Mounting
 app.use(express.urlencoded({extended : false}));
 app.use(express.json());
+app.use(expressValidator());
 app.use('/assets', express.static(__dirname + '/assets'))
 
 app.use(session({
@@ -48,5 +50,4 @@ hbs.registerPartials(__dirname + '/views/partials');
 
 app.listen(port, ()=>{
   console.log(`Server is listening to port ${port}`);
-  console.log(process.env.PORT);
 });

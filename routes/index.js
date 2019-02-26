@@ -5,6 +5,7 @@ const router = express.Router();
 const mysql = require('mysql');
 var session = require('express-session');
 
+
 var connection = mysql.createConnection({
 	host     : 'us-cdbr-iron-east-03.cleardb.net',
 	user     : 'b0fc3e71625b2b',
@@ -19,6 +20,59 @@ router.get('/', (req, res)=>{
   }else{
     res.redirect('/login');
   }
+
+})
+
+router.get('/register', (req, res) =>{
+	res.render('register', {title : 'Registration', success : true,  error : req.session.errors});
+	req.session.errors = null;
+})
+
+router.post('/register', (req, res)=>{
+
+	var firstname = req.body.firstname;
+	var lastname = req.body.lastname;
+	var username = req.body.username;
+	var password = req.body.password;
+	var email = req.body.email;
+	var role = 'user';
+
+	if(firstname && lastname){
+
+		req.check('email', 'invalid email').isEmail()
+		req.check('password', 'too short password').isLength({min: 4})
+		req.check('password', 'password doesnt match').equals(req.body.passwordconfirm)
+
+		let error = req.validationErrors();
+
+		if(error){
+			req.session.errors = error;
+			//console.log(error);
+			res.redirect('/register');
+		} else {
+
+			let tempU = 'select username from users where username = ?';
+			let tempE = 'select email from users where email = ?';
+
+			connection.query(tempU, [req.body.username], (err, result, fields) =>{
+				if(result.length > 0){  //If username already taken
+						res.render('register', {emailandusername : true , msg : 'Username is already taken'})
+				}else {
+					connection.query(tempE, [req.body.email], (err, result, fields) =>{
+						if(result.length > 0){  //If email already taken
+								res.render('register', {emailandusername : true , msg : 'Email is already taken'})
+				} else {
+					connection.query(`insert into users values(?, ?, NULL, ?, ?, ?, ?)`, [username, password, email, firstname, lastname, role], (err, result, fields) =>{
+						console.log(result);
+						res.redirect('/')
+					})
+				}
+			})
+		}
+	})
+}
+
+}
 
 })
 
