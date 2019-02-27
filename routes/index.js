@@ -6,11 +6,13 @@ const mysql = require('mysql');
 var session = require('express-session');
 
 
-var connection = mysql.createConnection({
+var mysqlPool  = mysql.createPool({
+
 	host     : 'us-cdbr-iron-east-03.cleardb.net',
 	user     : 'b0fc3e71625b2b',
 	password : 'ce7194f2',
 	database : 'heroku_91478704387a456'
+
 });
 
 router.get('/', (req, res)=>{
@@ -49,27 +51,52 @@ router.post('/register', (req, res)=>{
 			req.session.errors = error;
 			//console.log(error);
 			res.redirect('/register');
-		} else {
+		}else {
 
 			let tempU = 'select username from users where username = ?';
 			let tempE = 'select email from users where email = ?';
 
-			connection.query(tempU, [req.body.username], (err, result, fields) =>{
-				if(result.length > 0){  //If username already taken
-						res.render('register', {emailandusername : true , msg : 'Username is already taken'})
-				}else {
-					connection.query(tempE, [req.body.email], (err, result, fields) =>{
-						if(result.length > 0){  //If email already taken
-								res.render('register', {emailandusername : true , msg : 'Email is already taken'})
-				} else {
-					connection.query(`insert into users values(?, ?, NULL, ?, ?, ?, ?)`, [username, password, email, firstname, lastname, role], (err, result, fields) =>{
-						console.log(result);
-						res.redirect('/')
+			mysqlPool.getConnection((err, connection) =>{
+					if(err) throw err;
+
+					connection.query(tempU, [req.body.username], (err, result, fields) =>{
+						if(err){
+							connection.end();
+							console.log(err);
+						}
+
+						if(result.length > 0){  //If username already taken
+								res.render('register', {emailandusername : true , msg : 'Username is already taken'})
+						}else {
+							connection.query(tempE, [req.body.email], (err, result, fields) =>{
+								if(err){
+									connection.end();
+								}
+
+								if(result.length > 0){  //If email already taken
+										res.render('register', {emailandusername : true , msg : 'Email is already taken'})
+								}else {
+							connection.query(`insert into users values(?, ?, NULL, ?, ?, ?, ?)`, [username, password, email, firstname, lastname, role], (err, result, fields) =>{
+								if(err){
+									connection.end();
+								}
+								connection.end();
+								res.redirect('/')
+							})
+						}
+
+						connection.end();
+
 					})
 				}
+
+				connection.end();
+		})
+
+			connection.release();
+
 			})
-		}
-	})
+
 }
 
 }
@@ -86,19 +113,28 @@ router.post('/login', (req, res)=>{
 
   if(username && password)
   {
-    let q = 'select username, password from users where username = ? and password = ?';
-    connection.query(q, [username, password], (err, result, fields)=>{
-      if(result.length > 0)
-      {
-        req.session.loggedin = true;
-        req.session.username = username;
-        console.log(`User ${username} logged in`)
-        res.redirect('/');
-      }else{
-        console.log('password doesnt match');
-        res.redirect('/login');
-      }
-    })
+
+		mysqlPool.getConnection((err, connection) =>{
+			if(err) throw err;
+			let q = 'select username, password from users where username = ? and password = ?';
+	    connection.query(q, [username, password], (err, result, fields)=>{
+				if(err){
+					connection.end()
+				}
+
+				if(result.length > 0)
+	      {
+	        req.session.loggedin = true;
+	        req.session.username = username;
+	        console.log(`User ${username} logged in`)
+	        res.redirect('/');
+	      }else{
+	        console.log('password doesnt match');
+	        res.redirect('/login');
+	      }
+	    })
+			connection.release()
+		})
   }
 })
 
