@@ -13,8 +13,6 @@
     {{> nav}}
 
 
-
-
 <div class="container">
         <div class="row">
             <div class="col-12">
@@ -31,13 +29,11 @@
                                     </div>
                                 </div>
                                 <div class="userData ml-3">
-                                    <h2 class="d-block" style="font-size: 1.5rem; font-weight: bold"><a href="javascript:void(0);">Some Name</a></h2>
-                                    <h6 class="d-block"><a href="javascript:void(0)">1,500</a> Video Uploads</h6>
-                                    <h6 class="d-block"><a href="javascript:void(0)">300</a> Blog Posts</h6>
+                                    <h2 class="d-block" style="font-size: 1.5rem; font-weight: bold"><a href="javascript:void(0);">{{username}}</a></h2>
+                                    <h6 class="d-block"><a href="#" class="card-link">View all post</a> </h6>
+                                    <h6 class="d-block"><a href="#" class="card-link">Add post</a> </h6>
                                 </div>
-                                <div class="ml-auto">
-                                    <input type="button" class="btn btn-primary d-none" id="btnDiscard" value="Discard Changes" />
-                                </div>
+
                             </div>
                         </div>
 
@@ -48,7 +44,10 @@
                                         <a class="nav-link active" id="basicInfo-tab" data-toggle="tab" href="#basicInfo" role="tab" aria-controls="basicInfo" aria-selected="true">Basic Info</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="connectedServices-tab" data-toggle="tab" href="#connectedServices" role="tab" aria-controls="connectedServices" aria-selected="false">Connected Services</a>
+                                        <a class="nav-link" id="connectedServices-tab" data-toggle="tab" href="#connectedServices" role="tab" aria-controls="connectedServices" aria-selected="false">Patient History</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="myPost-tab" data-toggle="tab" href="#myPost" role="tab" aria-controls="myPost" aria-selected="false">My Posts</a>
                                     </li>
                                 </ul>
                                 <div class="tab-content ml-1" id="myTabContent">
@@ -60,39 +59,25 @@
                                                 <label style="font-weight:bold;">Full Name</label>
                                             </div>
                                             <div class="col-md-8 col-6">
-                                                Jamshaid Kamran
-                                            </div>
-                                        </div>
-                                        <hr />
-
-                                        <div class="row">
-                                            <div class="col-sm-3 col-md-2 col-5">
-                                                <label style="font-weight:bold;">Birth Date</label>
-                                            </div>
-                                            <div class="col-md-8 col-6">
-                                                March 22, 1994.
+                                                {{firstname}} {{lastname}}
                                             </div>
                                         </div>
                                         <hr />
 
 
+                                        <hr />
+
+
                                         <div class="row">
                                             <div class="col-sm-3 col-md-2 col-5">
-                                                <label style="font-weight:bold;">Something</label>
+                                                <label style="font-weight:bold;">E-mail</label>
                                             </div>
                                             <div class="col-md-8 col-6">
-                                                Something
+                                                {{email}}
                                             </div>
                                         </div>
                                         <hr />
-                                        <div class="row">
-                                            <div class="col-sm-3 col-md-2 col-5">
-                                                <label style="font-weight:bold;">Something</label>
-                                            </div>
-                                            <div class="col-md-8 col-6">
-                                                Something
-                                            </div>
-                                        </div>
+
                                         <hr />
                                         <div class="row">
                                             <div class="col-sm-3 col-md-2 col-5">
@@ -106,7 +91,11 @@
 
                                     </div>
                                     <div class="tab-pane fade" id="connectedServices" role="tabpanel" aria-labelledby="ConnectedServices-tab">
-                                        Facebook, Google, Twitter Account that are connected to this account
+                                        Patient history goes here
+                                    </div>
+
+                                    <div class="tab-pane fade" id="myPost" role="tabpanel" aria-labelledby="myPost-tab">
+                                        Posts will go here
                                     </div>
                                 </div>
                             </div>
