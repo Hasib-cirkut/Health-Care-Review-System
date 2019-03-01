@@ -1,50 +1,78 @@
 const express = require('express');
 const router = express.Router();
 const session = require('express-session');
-const mysql = require('mysql');
-
-var mysqlPool = mysql.createPool({
-
-  host: 'us-cdbr-iron-east-03.cleardb.net',
-  user: 'b0fc3e71625b2b',
-  password: 'ce7194f2',
-  database: 'heroku_91478704387a456'
-
-});
+const pool = require('./database');
 
 router.get('/', (req, res) => {
   if (req.session.loggedin) {
 
     var firstname, lastname, email;
+    var ans;
+    let first = false;
 
-    mysqlPool.getConnection((err, connection) => {
-      if (err) throw err;
 
-      let q = `select firstname, lastname, email from users where username = ?`
-      connection.query(q, [req.session.username], (err, result, fields) => {
-        if (err) {
-          console.log(err);
-          connection.release();
-        }
-
-        firstname = result[0].firstname;
-        lastname = result[0].lastname;
-        email = result[0].email;
-
+    let q = `SELECT * FROM blogs, users
+             WHERE blogs.username = users.username AND users.username = "Hasib";`
+    pool.query(q, [req.session.username], (err, result, fields) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
         res.render('user', {
-          username: req.session.username,
-          firstname: firstname,
-          lastname: lastname,
-          email: email
+          result: result
         });
-        //connection.release();
-      })
-
+      }
     })
+
+
+
+
+
+
   } else {
     res.redirect('/login');
   }
 })
+
+router.get('/addBlog', (req, res) => {
+  if (req.session.loggedin) {
+    res.render('addBlog');
+  } else {
+    res.redirect('/login');
+  }
+})
+
+
+router.post('/addBlog', (req, res) => {
+
+  var username = req.session.username;
+  var body = req.body.body;
+  var keywords = req.body.keywords;
+  var rating = req.body.rating;
+  var dName = req.body.doctorName;
+  var dDesignation = req.body.doctorDesignation;
+  var typeOfDisease = req.body.typeOfDisease;
+  var status = req.body.status;
+  var date = new Date();
+
+  let q = `insert into blogs values('', ?, ?, ?, ?, ?, ?, ?, ?, ? )`
+
+  pool.query(q, [username, body, keywords, rating, dName, dDesignation, typeOfDisease, status, date], (err, result, fields) => {
+    if (err) {
+      throw err;
+    } else {
+      res.redirect('/user');
+    }
+  })
+
+})
+
+
+
+
+
+
+
 
 
 module.exports = router;
