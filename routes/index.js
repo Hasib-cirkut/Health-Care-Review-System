@@ -4,6 +4,7 @@ const mysql = require('mysql');
 const session = require('express-session');
 const pool = require('./database');
 
+var searchKey = null;
 
 // var connection = mysql.createConnection({
 //
@@ -63,35 +64,35 @@ router.post('/register', (req, res) => {
     let tempI = `insert into users values(?, ?, NULL, ?, ?, ?, ?)`
 
     pool.query(tempU, [username], (err, result, fields) => {
-        if (err) throw err
+      if (err) throw err
 
-        if (result.length > 0) {
-          console.log('username taken');
-          res.render('register', {
-            emailandusername: true,
-            msg: 'Username is already taken'
-          })
-        }else {
-          pool.query(tempE, [email], (err, result, fields) => {
-            if (err) throw err
+      if (result.length > 0) {
+        console.log('username taken');
+        res.render('register', {
+          emailandusername: true,
+          msg: 'Username is already taken'
+        })
+      } else {
+        pool.query(tempE, [email], (err, result, fields) => {
+          if (err) throw err
 
-            if (result.length > 0) {
-              res.render('register', {
-                emailandusername: true,
-                msg: 'Email is already taken'
-              })
-            }else {
-              pool.query(tempI, [username, password, email, firstname, lastname, role], (err, result, fields) => {
-                if (err) throw err
-                else
+          if (result.length > 0) {
+            res.render('register', {
+              emailandusername: true,
+              msg: 'Email is already taken'
+            })
+          } else {
+            pool.query(tempI, [username, password, email, firstname, lastname, role], (err, result, fields) => {
+              if (err) throw err
+              else
                 res.redirect('/');
-              })
-            }
-          })
-        }
-      })
-    }
-  })
+            })
+          }
+        })
+      }
+    })
+  }
+})
 
 
 router.get('/login', (req, res) => {
@@ -105,7 +106,7 @@ router.post('/login', (req, res) => {
   if (username && password) {
 
     let q = 'select username, password from users where username = ? and password = ?';
-    pool.query(q, [username, password], (err, result, fields)=> {
+    pool.query(q, [username, password], (err, result, fields) => {
       if (err) {
         throw err;
       }
@@ -121,12 +122,40 @@ router.post('/login', (req, res) => {
       }
     })
 
-    }
+  }
 })
 
 router.get('/logout', (req, res) => {
   req.session.loggedin = false;
   res.redirect('/');
+})
+
+
+router.get('/search', (req, res) => {
+
+  res.render('search', {
+    result: searchKey
+  });
+
+  searchKey = null;
+
+})
+
+router.post('/search', (req, res) => {
+  let keywords = req.body.searchText;
+
+  let q = 'select * from blogs where keywords like ? order by rating desc;';
+
+  pool.query(q, ['%' + keywords + '%'], (err, result, fields) => {
+
+    if (err) {
+      throw err
+    } else {
+      console.log(result);
+      searchKey = result;
+      res.redirect('/search');
+    }
+  })
 })
 
 

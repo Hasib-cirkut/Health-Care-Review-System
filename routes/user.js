@@ -8,16 +8,14 @@ router.get('/', (req, res) => {
 
     var firstname, lastname, email;
     var ans;
-    let first = false;
-
 
     let q = `SELECT * FROM blogs, users
-             WHERE blogs.username = users.username AND users.username = "Hasib";`
+             WHERE blogs.username = users.username AND users.username = ?;`
+
     pool.query(q, [req.session.username], (err, result, fields) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(result);
         res.render('user', {
           result: result
         });
@@ -65,6 +63,19 @@ router.post('/addBlog', (req, res) => {
     }
   })
 
+})
+
+router.get('/deletePost/:blogId', (req, res) => {
+  let blogId = req.params.blogId;
+
+  let q = `delete from blogs where blogId = ?`
+
+  pool.query(q, [blogId], (err, result, fields) => {
+    if (err) throw err;
+    else {
+      res.redirect('/user');
+    }
+  })
 })
 
 

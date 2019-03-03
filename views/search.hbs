@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://bootswatch.com/4/simplex/bootstrap.min.css" />
+
+  <title>Search</title>
+</head>
+
+<body>
+  {{> nav}}
+
+  <div class="row">
+    <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+      <div class="card card-search my-5">
+        <div class="card-body">
+          <h5 class="card-title text-center">Search</h5>
+          <form class="form-signin" method="post" action="/search">
+
+            <div class="form-label-group">
+              <input type="text" id="searchText" name="searchText" class="form-control" placeholder="Enter keywords" required autofocus>
+
+            </div>
+
+            <br>
+            <br>
+
+            <div class="text-center">
+              <button class="btn btn-lg btn-success text-uppercase" type="submit">Search</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {{#each result}}
+
+    <div class="row" style="position: relative; margin: 0px 50px 0px;">
+      <div class="span8" >
+        <div class="row">
+          <div class="span6" >
+            <h4><strong><a href="#">{{typeOfDisease}}</a></strong></h4>
+          </div>
+        </div>
+        <div class="row">
+
+          <div class="span6">
+            <p>
+              {{body}}
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span8">
+            <p></p>
+            <p>
+              <i class="icon-user"></i> by <a href="#">{{username}}</a>
+              |<i class="icon-calendar"></i> {{date}}
+
+              |<a href="#"><span class="label label-info">{{status}}</span></a>
+
+
+              |<a href="/user/deletePost/{{blogId}}"><span class="label label-info">Delete</span></a>
+
+
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <hr />
+
+  {{/each}}
+
+</body>
+
+</html>
