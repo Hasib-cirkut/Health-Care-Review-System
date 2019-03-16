@@ -133,11 +133,17 @@ router.get('/logout', (req, res) => {
 
 router.get('/search', (req, res) => {
 
-  res.render('search', {
-    result: searchKey
-  });
+  if (req.session.loggedin) {
 
-  searchKey = null;
+    res.render('search', {
+      result: searchKey
+    });
+
+    searchKey = null;
+
+  } else {
+    res.redirect('/');
+  }
 
 })
 
@@ -151,7 +157,6 @@ router.post('/search', (req, res) => {
     if (err) {
       throw err
     } else {
-      console.log(result);
       searchKey = result;
       res.redirect('/search');
     }

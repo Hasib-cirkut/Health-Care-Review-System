@@ -17,14 +17,14 @@ router.get('/', (req, res) => {
         console.log(err);
       } else {
         res.render('user', {
-          result: result
+          result: result,
+          username: result[0].username,
+          email: result[0].email,
+          firstname: result[0].firstname,
+          lastname: result[0].lastname
         });
       }
     })
-
-
-
-
 
 
   } else {
