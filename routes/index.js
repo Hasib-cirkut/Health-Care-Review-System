@@ -142,7 +142,7 @@ router.get('/search', (req, res) => {
     searchKey = null;
 
   } else {
-    res.redirect('/');
+    res.redirect('/login');
   }
 
 })
