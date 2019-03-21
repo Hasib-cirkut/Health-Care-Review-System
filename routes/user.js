@@ -9,15 +9,14 @@ router.get('/', (req, res) => {
     var firstname, lastname, email;
     var ans;
 
-    let q = `SELECT * FROM blogs, users
-             WHERE blogs.username = users.username AND users.username = ?;`
+    let q = `SELECT * FROM users
+             WHERE users.username = ?;`
 
     pool.query(q, [req.session.username], (err, result, fields) => {
       if (err) {
         console.log(err);
       } else {
         res.render('user', {
-          result: result,
           username: result[0].username,
           email: result[0].email,
           firstname: result[0].firstname,
@@ -68,6 +67,8 @@ router.post('/addBlog', (req, res) => {
 router.get('/deletePost/:blogId', (req, res) => {
   let blogId = req.params.blogId;
 
+  console.log(blogId);
+
   let q = `delete from blogs where blogId = ?`
 
   pool.query(q, [blogId], (err, result, fields) => {
@@ -76,6 +77,27 @@ router.get('/deletePost/:blogId', (req, res) => {
       res.redirect('/user');
     }
   })
+})
+
+router.get('/userblogs', (req, res) => {
+  if (req.session.loggedin) {
+
+    let query = `select * from blogs where blogs.username = ?`
+
+    pool.query(query, [req.session.username], (err, result, fields) => {
+      if (err) {
+        throw err
+      } else {
+        res.render('userblogs', {
+          result: result
+        })
+      }
+    })
+
+
+  } else {
+    res.redirect('/login')
+  }
 })
 
 

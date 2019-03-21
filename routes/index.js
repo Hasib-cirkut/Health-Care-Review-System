@@ -61,7 +61,7 @@ router.post('/register', (req, res) => {
 
     let tempE = 'select email from users where email = ?';
     let tempU = 'select username from users where username = ?';
-    let tempI = `insert into users values(?, ?, NULL, ?, ?, ?, ?)`
+    let tempI = `insert into users values(?, ?, ?, ?, ?, ?)`
 
     pool.query(tempU, [username], (err, result, fields) => {
       if (err) throw err
@@ -85,7 +85,7 @@ router.post('/register', (req, res) => {
             pool.query(tempI, [username, password, email, firstname, lastname, role], (err, result, fields) => {
               if (err) throw err
               else
-                res.redirect('/');
+                res.redirect('/login');
             })
           }
         })
