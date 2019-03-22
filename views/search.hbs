@@ -70,7 +70,8 @@
 
             <div class="span6">
               <form method="post" action="/user/comment">
-                <input type="text" id="comment" name="comment" class="form-control" placeholder="" autofocus>
+                <input type="text" id="body" name="body" class="form-control" placeholder="" autofocus>
+                <input type="hidden" id="blogID" name="blogID" value={{blogId}}>
                 <button class="btn btn-lg btn-block text-uppercase" type="submit">Comment</button>
               </form>
             </div>

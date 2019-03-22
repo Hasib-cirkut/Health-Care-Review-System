@@ -108,7 +108,7 @@ router.get('/userblogs', (req, res) => {
 
 router.post('/comment', (req, res) => {
   let blogID = req.body.blogID;
-  let body = req.body.comment;
+  let body = req.body.body;
   let username = req.session.username
 
   let query = `insert into comment values('', ?, ?, ?)`
