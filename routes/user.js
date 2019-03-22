@@ -67,14 +67,20 @@ router.post('/addBlog', (req, res) => {
 router.get('/deletePost/:blogId', (req, res) => {
   let blogId = req.params.blogId;
 
-  console.log(blogId);
 
   let q = `delete from blogs where blogId = ?`
+  let r = `delete from comment where blogID = ?`
 
   pool.query(q, [blogId], (err, result, fields) => {
     if (err) throw err;
     else {
-      res.redirect('/user');
+      pool.query(r, [blogId], (err, result, fields) =>{
+        if(err){
+          throw err;
+        }else{
+          res.redirect('/user')
+        }
+      })
     }
   })
 })
@@ -98,6 +104,76 @@ router.get('/userblogs', (req, res) => {
   } else {
     res.redirect('/login')
   }
+})
+
+router.post('/comment', (req, res) => {
+  let blogID = req.body.blogID;
+  let body = req.body.comment;
+  let username = req.session.username
+
+  let query = `insert into comment values('', ?, ?, ?)`
+
+  pool.query(query, [blogID, username, body], (err, result, fields) => {
+    if (err) {
+      throw err
+    } else {
+      res.redirect('/search');
+    }
+  })
+
+
+})
+
+router.get('/comments/:blogID', (req, res)=>{
+
+  let blogID = req.params.blogID
+
+  let query = `select * from comment where blogID = ?`;
+
+  pool.query(query, [blogID], (err, result, fields)=>{
+    if(err){
+      throw err
+    }else{
+
+      res.render('comments', {
+        result : result
+
+      });
+    }
+  })
+})
+
+router.get('/userComments/:blogID', (req, res)=>{
+
+  let blogID = req.params.blogID
+
+  let query = `select * from comment where blogID = ?`;
+
+  pool.query(query, [blogID], (err, result, fields)=>{
+    if(err){
+      throw err
+    }else{
+
+      res.render('userComments', {
+        result : result
+
+      });
+    }
+  })
+})
+
+router.get('/deleteComment/:ID', (req, res) => {
+  let id = req.params.ID;
+
+
+  let q = `delete from comment where ID = ?`
+
+  pool.query(q, [id], (err, result, fields) => {
+    if (err) throw err;
+    else {
+      res.redirect('/user');
+    }
+  })
 })
 
 

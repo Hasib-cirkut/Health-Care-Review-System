@@ -5,6 +5,7 @@ const session = require('express-session');
 const pool = require('./database');
 
 var searchKey = null;
+var commentKey = null;
 
 // var connection = mysql.createConnection({
 //
@@ -134,6 +135,8 @@ router.get('/logout', (req, res) => {
 router.get('/search', (req, res) => {
 
   if (req.session.loggedin) {
+
+    let query = `select * from comment, blogs where comment.blogID = blogs.blogId`
 
     res.render('search', {
       result: searchKey

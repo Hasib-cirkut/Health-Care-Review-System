@@ -16,14 +16,10 @@
 
   {{#each result}}
 
-  <hr />
-
     <div class="row" style="position: relative; margin: 0px 50px 0px;">
       <div class="span8" >
         <div class="row">
-          <div class="span6" >
-            <h4><strong><a href="#">{{typeOfDisease}}</a></strong></h4>
-          </div>
+
         </div>
         <div class="row">
 
@@ -38,14 +34,12 @@
             <p></p>
             <p>
               <i class="icon-user"></i> by <a href="#">{{username}}</a>
-              |<i class="icon-calendar"></i> {{date}}
-
-              |<a href="#"><span class="label label-info">{{status}}</span></a>
-              |<a href="/user/userComments/{{blogId}}"><span class="label label-info">Comments</span></a>
-              |<a href="/user/deletePost/{{blogId}}"><span class="label label-info">Delete</span></a>
-
-
+              |<a href="/user/deleteComment/{{ID}}"><span class="label label-info">Delete</span></a>
             </p>
+
+
+
+
           </div>
         </div>
       </div>
