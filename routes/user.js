@@ -74,10 +74,10 @@ router.get('/deletePost/:blogId', (req, res) => {
   pool.query(q, [blogId], (err, result, fields) => {
     if (err) throw err;
     else {
-      pool.query(r, [blogId], (err, result, fields) =>{
-        if(err){
+      pool.query(r, [blogId], (err, result, fields) => {
+        if (err) {
           throw err;
-        }else{
+        } else {
           res.redirect('/user')
         }
       })
@@ -124,38 +124,38 @@ router.post('/comment', (req, res) => {
 
 })
 
-router.get('/comments/:blogID', (req, res)=>{
+router.get('/comments/:blogID', (req, res) => {
 
   let blogID = req.params.blogID
 
   let query = `select * from comment where blogID = ?`;
 
-  pool.query(query, [blogID], (err, result, fields)=>{
-    if(err){
+  pool.query(query, [blogID], (err, result, fields) => {
+    if (err) {
       throw err
-    }else{
+    } else {
 
       res.render('comments', {
-        result : result
+        result: result
 
       });
     }
   })
 })
 
-router.get('/userComments/:blogID', (req, res)=>{
+router.get('/userComments/:blogID', (req, res) => {
 
   let blogID = req.params.blogID
 
   let query = `select * from comment where blogID = ?`;
 
-  pool.query(query, [blogID], (err, result, fields)=>{
-    if(err){
+  pool.query(query, [blogID], (err, result, fields) => {
+    if (err) {
       throw err
-    }else{
+    } else {
 
       res.render('userComments', {
-        result : result
+        result: result
 
       });
     }
@@ -176,6 +176,72 @@ router.get('/deleteComment/:ID', (req, res) => {
   })
 })
 
+//Get other peoples account
+router.get('/:name', (req, res) => {
+  if (req.session.loggedin) {
+    let name = req.params.name;
+    let makeAdmin = false;
+
+
+    let q = `select * from users where BINARY username = ?` //Binary is mysql clause that ensures byte by byte comparason
+
+    //so username = 'Hasib' will return only if there is a row with user name Hasib, not hasib/HaSiB/hASIB
+
+    let r = `select * from blogs where username = ?`
+
+    pool.query(q, [name], (err, userResult, fields) => {
+      if (err) {
+        throw err
+        res.redirect('/')
+      } else if (userResult.length <= 0) {
+        console.log('No user of this name');
+        res.redirect('/')
+      } else if (userResult.length > 0) {
+
+        let username = userResult[0].username;
+        if(userResult[0].role !== "admin" && req.session.role === "admin"){
+          makeAdmin = true;
+        }
+
+        pool.query(r, [username], (err, blogResult, fields) => {
+          if (err) {
+            throw err
+          } else {
+            res.render('uservisit', {
+              username: userResult[0].username,
+              firstname: userResult[0].firstname,
+              lastname: userResult[0].lastname,
+              email: userResult[0].email,
+              blogResult: blogResult,
+              makeAdmin: makeAdmin
+            }) //res.render
+          } //else
+        }) //pool.query
+      } //else if
+    }) //pool.query
+  } else {
+    res.redirect('/')
+  }
+
+})
+
+router.get('/makeAdmin/:name', (req, res)=>{
+  if(req.session.loggedin){
+    let username = req.params.name;
+    let type = "admin";
+    let q = `UPDATE users SET role = ? WHERE username = ?`
+
+    pool.query(q, [type, username], (err, result, fields)=>{
+      if(err){
+        throw err;
+      }else{
+        res.redirect(`/user/${username}`);
+      }
+    })
+  }else{
+    res.redirect('/')
+  }
+})
 
 
 

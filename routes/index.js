@@ -106,7 +106,7 @@ router.post('/login', (req, res) => {
 
   if (username && password) {
 
-    let q = 'select username, password from users where username = ? and password = ?';
+    let q = 'select username, password, role from users where username = binary ? and password = ?';
     pool.query(q, [username, password], (err, result, fields) => {
       if (err) {
         throw err;
@@ -115,7 +115,8 @@ router.post('/login', (req, res) => {
       if (result.length > 0) {
         req.session.loggedin = true;
         req.session.username = username;
-        console.log(`User ${username} logged in`)
+        req.session.role = result[0].role;
+        console.log(`User ${username} logged in with ${req.session.role} authorization`)
         res.redirect('/');
       } else {
         console.log('password doesnt match');
@@ -152,6 +153,9 @@ router.get('/search', (req, res) => {
 
 router.post('/search', (req, res) => {
   let keywords = req.body.searchText;
+  let searchType = req.body.searchType;
+
+  if(searchType === "blogs"){
 
   let q = 'select * from blogs where keywords like ? order by rating desc;';
 
@@ -164,6 +168,12 @@ router.post('/search', (req, res) => {
       res.redirect('/search');
     }
   })
+
+}else if(searchType === "user"){
+
+  res.redirect('/user/' + keywords);
+}
+
 })
 
 
