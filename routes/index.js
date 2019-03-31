@@ -6,6 +6,7 @@ const pool = require('./database');
 
 var searchKey = null;
 var commentKey = null;
+var type =
 
 // var connection = mysql.createConnection({
 //
@@ -171,9 +172,35 @@ router.post('/search', (req, res) => {
 
 }else if(searchType === "user"){
 
-  res.redirect('/user/' + keywords);
+  res.redirect('/user/searchUser/' + keywords);
+
+}else if(searchType === "hospital"){
+
+  res.redirect('/searchHospital/' + keywords);
 }
 
+})
+
+router.get('/searchHospital/:name', (req, res)=>{
+  if(req.session.loggedin){
+    let name = req.params.name;
+    let q = `select * from hospitalblogs where name like ?`
+
+    pool.query(q, ['%' + name + '%'], (err, result, fields)=>{
+      if(err){
+        throw err
+      }else if(result.length <= 0){
+        console.log('no result found')
+        res.redirect('/search')
+      }else if(result.length > 0){
+        console.log(result);
+        res.render('hospitalblogs', {result: result})
+      }
+    })
+
+  }else{
+    res.redirect('/login')
+  }
 })
 
 

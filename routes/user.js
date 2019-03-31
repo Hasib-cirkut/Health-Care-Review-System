@@ -177,7 +177,7 @@ router.get('/deleteComment/:ID', (req, res) => {
 })
 
 //Get other peoples account
-router.get('/:name', (req, res) => {
+router.get('/searchUser/:name', (req, res) => {
   if (req.session.loggedin) {
     let name = req.params.name;
     let makeAdmin = false;
@@ -241,6 +241,31 @@ router.get('/makeAdmin/:name', (req, res)=>{
   }else{
     res.redirect('/')
   }
+})
+
+router.get('/addHospitalReview', (req, res)=>{
+  if(req.session.loggedin){
+    res.render('addHospitalReview');
+  }else{
+    res.redirect('/login');
+  }
+})
+
+router.post('/addHospitalReview', (req, res)=>{
+  let hName = req.body.hostpitalName;
+  let hAdd = req.body.hospitalAddress;
+  let phone = req.body.phonenumber;
+  let body = req.body.body;
+
+  let q = `insert into hospitalblogs values('', ?, ?, ?, ?, ?)`
+
+  pool.query(q, [hName, req.session.username, body, hAdd, phone], (err, result, fields)=>{
+    if(err){
+      throw err;
+    }else{
+      res.redirect('/user');
+    }
+  })
 })
 
 
