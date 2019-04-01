@@ -8,6 +8,8 @@ const index = require('./routes/index.js');
 const user = require('./routes/user.js');
 const session = require('express-session');
 const expressValidator = require('express-validator');
+require('dotenv').config()
+
 
 
 const port = process.env.PORT || 5000;

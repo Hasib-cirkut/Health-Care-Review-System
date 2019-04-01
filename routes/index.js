@@ -3,19 +3,10 @@ const router = express.Router();
 const mysql = require('mysql');
 const session = require('express-session');
 const pool = require('./database');
+const multer = require('../middleware/multer');
 
 var searchKey = null;
 var commentKey = null;
-var type =
-
-// var connection = mysql.createConnection({
-//
-//   host: 'us-cdbr-iron-east-03.cleardb.net',
-//   user: 'b0fc3e71625b2b',
-//   password: 'ce7194f2',
-//   database: 'heroku_91478704387a456'
-//
-// });
 
 router.get('/', (req, res) => {
   if (req.session.loggedin) {
@@ -26,7 +17,7 @@ router.get('/', (req, res) => {
 
 })
 
-router.get('/register', (req, res) => {
+router.get('/register', multer.single('image'), (req, res) => {
   res.render('register', {
     title: 'Registration',
     success: true,
@@ -35,7 +26,7 @@ router.get('/register', (req, res) => {
   req.session.errors = null;
 })
 
-router.post('/register', (req, res) => {
+router.post('/register',  (req, res) => {
 
   var firstname = req.body.firstname;
   var lastname = req.body.lastname;
@@ -43,8 +34,6 @@ router.post('/register', (req, res) => {
   var password = req.body.password;
   var email = req.body.email;
   var role = 'user';
-
-
 
   req.check('email', 'invalid email').isEmail()
   req.check('password', 'too short password').isLength({

@@ -2,9 +2,14 @@ const express = require('express');
 const router = express.Router();
 const session = require('express-session');
 const pool = require('./database');
+const multer = require('../middleware/multer');
+const cloudinary = require('cloudinary');
+require('../middleware/cloudinary')
 
 router.get('/', (req, res) => {
   if (req.session.loggedin) {
+
+
 
     var firstname, lastname, email;
     var ans;
@@ -20,7 +25,8 @@ router.get('/', (req, res) => {
           username: result[0].username,
           email: result[0].email,
           firstname: result[0].firstname,
-          lastname: result[0].lastname
+          lastname: result[0].lastname,
+          imageurl: result[0].imageurl
         });
       }
     })
@@ -212,6 +218,7 @@ router.get('/searchUser/:name', (req, res) => {
               firstname: userResult[0].firstname,
               lastname: userResult[0].lastname,
               email: userResult[0].email,
+              imageurl: userResult[0].imageurl,
               blogResult: blogResult,
               makeAdmin: makeAdmin
             }) //res.render
@@ -262,6 +269,32 @@ router.post('/addHospitalReview', (req, res)=>{
   pool.query(q, [hName, req.session.username, body, hAdd, phone], (err, result, fields)=>{
     if(err){
       throw err;
+    }else{
+      res.redirect('/user');
+    }
+  })
+})
+
+router.get('/uploadimage', (req, res)=>{
+  if(req.session.loggedin){
+    res.render('uploadimage')
+  }else{
+    res.redirect('/')
+  }
+})
+
+router.post('/uploadimage', multer.single('image'), async (req, res)=>{
+  const result = await cloudinary.v2.uploader.upload(req.file.path, {secure: true, transformation: [
+  {width: 250, height: 250, gravity: "face", radius: 20, crop: "thumb"}
+  ]})
+
+  let q = `UPDATE users SET imageurl = ? WHERE username = ?`
+  let username = req.session.username
+
+
+  pool.query(q, [result.url, username], (err, result, fields)=>{
+    if(err){
+      throw err
     }else{
       res.redirect('/user');
     }
